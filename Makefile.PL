@@ -23,6 +23,8 @@ requires 'Moose'                      => '0.92';
 requires 'namespace::autoclean'       => '0.09';
 requires 'List::Util'                 => 0;
 requires 'Scope::Guard'               => '0.03';
+requires 'Geo::IP'	                  => 0;
+
 
 test_requires 'Test::Most'            => '0.21';
 test_requires 'Test::More'            => '0.92';

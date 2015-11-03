@@ -14,6 +14,7 @@ requires
 use List::Util qw(first);
 use Scope::Guard;
 use I18N::LangTags::List;
+use Geo::IP;
 
 =head1 NAME
 
@@ -25,7 +26,7 @@ Version 0.08
 
 =cut
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 
 =head1 SYNOPSIS
@@ -178,6 +179,14 @@ after setup_finalize => sub {
   if (!defined $config->{language_independent_paths}) {
     $config->{language_independent_paths} = qr/(?!)/; # never matches anything
   }
+
+  # Load GeoIP db
+  if (!$config->{geoip_db}) {
+    die ("Pleas set the geoip_db config option for Plugin::I18N::PathPrefixGeoIP.");
+  }
+
+  $config->{geoip} = Geo::IP->open($config->{geoip_db}) or die("Can not open GeiIP db '" . $config->{geoip_db} . "'");
+
 };
 
 =head2 prepare_path
@@ -277,10 +286,24 @@ sub prepare_path_prefix
       }
     }
     else {
-      my $detected_language_code =
+      my $detected_language_code;
+
+      my $geocountry = $config->{geoip}->record_by_addr($c->req->address)->country_code;
+      $geocountry = lc($geocountry);
+
+      $c->_language_prefix_debug("Ip: " . $c->req->address ." -> ountry_code: '". $geocountry . "'");
+
+      if (exists $valid_language_codes->{$geocountry}) {
+        $detected_language_code = $geocountry;
+        $c->_language_prefix_debug("Detected valid language by GeoIP: $detected_language_code");
+      }
+      else {
+        $c->_language_prefix_debug("Did not find valid language by GeoIP. Failing over to languages request header.");
+         $detected_language_code =
         first { exists $valid_language_codes->{$_} }
           map { lc $_ }
             @{ $c->languages };
+      }
 
       $c->_language_prefix_debug("detected language: "
         . ($detected_language_code ? "'$detected_language_code'" : "N/A"));
