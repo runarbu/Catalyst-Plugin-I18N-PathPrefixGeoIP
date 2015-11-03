@@ -14,7 +14,7 @@ use Test::Deep;
 
 =head1 NAME
 
-TestUtils - Utilities for testing Catalyst::Plugin::I18N::PathPrefix
+TestUtils - Utilities for testing Catalyst::Plugin::I18N::PathPrefixGeoIP
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ Each element of C<@tests> is a hashref, with the following key-value pairs:
 =item config
 
 An arrayref that describes the configuration of the module. The corresponding
-key-value pairs of C<< $c->config->{'Plugin::I18N::PathPrefix'} >> are set to
+key-value pairs of C<< $c->config->{'Plugin::I18N::PathPrefixGeoIP'} >> are set to
 these values before the request.
 
 =item request
@@ -125,7 +125,7 @@ sub run_prepare_path_prefix_tests {
 
   local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-  my %original_config = %{ TestApp->config->{'Plugin::I18N::PathPrefix'} };
+  my %original_config = %{ TestApp->config->{'Plugin::I18N::PathPrefixGeoIP'} };
 
   foreach my $test (@tests) {
     my $test_description =
@@ -137,12 +137,12 @@ sub run_prepare_path_prefix_tests {
         }
       ])->Terse(1)->Indent(0)->Quotekeys(0)->Dump;
 
-    TestApp->config->{'Plugin::I18N::PathPrefix'} = { %original_config };
+    TestApp->config->{'Plugin::I18N::PathPrefixGeoIP'} = { %original_config };
     while (my ($config_key, $config_value) = each %{ $test->{config} }) {
-      TestApp->config->{'Plugin::I18N::PathPrefix'}->{$config_key}
+      TestApp->config->{'Plugin::I18N::PathPrefixGeoIP'}->{$config_key}
         = $config_value;
     }
-    TestApp->setup_finalize;  # force C:P:I18N::PathPrefix re-parse its config
+    TestApp->setup_finalize;  # force C:P:I18N::PathPrefixGeoIP re-parse its config
 
     my ($response, $c) = ctx_request(
       GET $test->{request}->{path},

@@ -9,7 +9,7 @@ our $VERSION = '0.01';
 
 __PACKAGE__->config(
   name => 'TestApp',
-  'Plugin::I18N::PathPrefix' => {
+  'Plugin::I18N::PathPrefixGeoIP' => {
     valid_languages => ['en', 'de', 'fr', 'IT'],
     fallback_language => 'en',
     language_independent_paths => qr{
@@ -18,7 +18,7 @@ __PACKAGE__->config(
   },
 );
 
-__PACKAGE__->setup( qw(I18N I18N::PathPrefix) );
+__PACKAGE__->setup( qw(I18N I18N::PathPrefixGeoIP) );
 
 has language_prefix_debug_messages => (
   isa => 'ArrayRef[Str]',
@@ -30,7 +30,7 @@ has language_prefix_debug_messages => (
     append_to_language_prefix_debug_messages => 'push',
   },
   documentation =>
-    'The messages logged by the C:P::I18N::PathPrefix module.',
+    'The messages logged by the C:P::I18N::PathPrefixGeoIP module.',
 );
 
 before prepare_request => sub {

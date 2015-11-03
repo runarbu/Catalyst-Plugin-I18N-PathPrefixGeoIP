@@ -11,9 +11,9 @@ use Module::Install::Repository 0.06;
 use Module::Install::ExtraTests 0.006;
 use Module::Install::Share 0.91;
 
-name 'Catalyst-Plugin-I18N-PathPrefix';
-all_from 'lib/Catalyst/Plugin/I18N/PathPrefix.pm';
-readme_from 'lib/Catalyst/Plugin/I18N/PathPrefix.pm' => 'clean';
+name 'Catalyst-Plugin-I18N-PathPrefixGeoIP';
+all_from 'lib/Catalyst/Plugin/I18N/PathPrefixGeoIP.pm';
+readme_from 'lib/Catalyst/Plugin/I18N/PathPrefixGeoIP.pm' => 'clean';
 auto_set_repository;
 
 requires 'Catalyst'                   => '5.80013';
