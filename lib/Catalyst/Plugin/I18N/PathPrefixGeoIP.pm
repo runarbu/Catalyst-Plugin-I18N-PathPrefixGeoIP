@@ -16,17 +16,11 @@ use Scope::Guard;
 use I18N::LangTags::List;
 use Geo::IP;
 
+our $VERSION = '0.09';
+
 =head1 NAME
 
 Catalyst::Plugin::I18N::PathPrefixGeoIP - A drop in for atalyst::Plugin::I18N::PathPrefix that uses GeoIP
-
-=head1 VERSION
-
-Version 0.08
-
-=cut
-
-our $VERSION = '0.01';
 
 
 =head1 SYNOPSIS
