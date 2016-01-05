@@ -18,7 +18,7 @@ use Geo::IP;
 
 =head1 NAME
 
-Catalyst::Plugin::I18N::PathPrefixGeoIP - Language prefix in the request path
+Catalyst::Plugin::I18N::PathPrefixGeoIP - A drop in for atalyst::Plugin::I18N::PathPrefix that uses GeoIP
 
 =head1 VERSION
 
@@ -26,7 +26,7 @@ Version 0.08
 
 =cut
 
-our $VERSION = '0.09';
+our $VERSION = '0.01';
 
 
 =head1 SYNOPSIS
@@ -41,6 +41,7 @@ our $VERSION = '0.09';
     language_independent_paths => qr{
         ^( votes/ | captcha/numeric/ )
     }x,
+    geoip_db => 'data/GeoLiteCity.dat',
   });
   __PACKAGE__->setup;
 
@@ -56,7 +57,9 @@ our $VERSION = '0.09';
   #                                      dispatcher sees /foo/bar
   
 
-  # http://www.example.com/foo/bar    -> sets $c->language from
+  # http://www.example.com/foo/bar    -> used GeoIP to sets $c->language
+  #                                      If GeoIp dos not fain a mach it fails
+  #                                      over to use language from
   #                                      Accept-Language header,
   #                                      dispatcher sees /foo/bar
   #
@@ -288,17 +291,14 @@ sub prepare_path_prefix
     else {
       my $detected_language_code;
 
-      my $geocountry = $config->{geoip}->record_by_addr($c->req->address)->country_code;
-      $geocountry = lc($geocountry);
+      my $geocountry = _ip2contry($config->{geoip}, $c->req->address);
 
-      $c->_language_prefix_debug("Ip: " . $c->req->address ." -> ountry_code: '". $geocountry . "'");
-
-      if (exists $valid_language_codes->{$geocountry}) {
+      if ($geocountry && exists $valid_language_codes->{$geocountry}) {
         $detected_language_code = $geocountry;
-        $c->_language_prefix_debug("Detected valid language by GeoIP: $detected_language_code");
+        $c->_language_prefix_debug("Detected valid language by GeoIP. Ip: " . $c->req->address . " -> Country: '$detected_language_code'");
       }
       else {
-        $c->_language_prefix_debug("Did not find valid language by GeoIP. Failing over to languages request header.");
+        $c->_language_prefix_debug("Did not find valid language by GeoIP. Failing over to languages request header. Ip Address: " . $c->req->address);
          $detected_language_code =
         first { exists $valid_language_codes->{$_} }
           map { lc $_ }
@@ -482,6 +482,25 @@ sub language_switch_options
 }
 
 
+=head2 valid_languages
+
+  $c->valid_languages
+
+Returns: Array of valid language codes
+
+C<< valid_languages >> returns the language codes you configured in the valid_languages configuration.
+
+Useful if you want to go through all valid languages. For example to make a sitemap.
+
+=cut
+
+sub valid_languages
+{
+  my ($c) = (shift, @_);
+
+  return @{ $c->config->{'Plugin::I18N::PathPrefixGeoIP'}->{valid_languages} }
+}
+
 =begin internal
 
   $c->_set_language_prefix($language_code)
@@ -558,15 +577,40 @@ sub _language_prefix_debug
     if $c->config->{'Plugin::I18N::PathPrefixGeoIP'}->{debug};
 }
 
+=begin internal
+
+  _ip2contry($geoip_obj, $ipadress)
+
+Find contry for ip
+
+=end internal
+
+=cut
+
+sub _ip2contry {
+    my ($geoip, $ip) = (@_);
+
+    if (!$ip) {return undef;} 
+
+    my $record = $geoip->record_by_addr($ip);
+    if (!$record) {return undef;} 
+
+    my $geocountry = $record->country_code;
+    if (!$geocountry) {return undef;} 
+
+    $geocountry = lc($geocountry);
+
+    return $geocountry;
+}
 
 =head1 SEE ALSO
 
-L<Catalyst::Plugin::I18N>, L<Catalyst::TraitFor::Request::PerLanguageDomains>
+L<Catalyst::Plugin::I18N::PathPrefix>, L<Catalyst::Plugin::I18N>, L<Catalyst::TraitFor::Request::PerLanguageDomains>
 
 =head1 AUTHOR
 
-Norbert Buchmuller, C<< <norbi at nix.hu> >>
-
+PathPrefix: Norbert Buchmuller, C<<norbi at nix.hu>>
+PathPrefixGeoIP: Runar Buvik: C<<runarb at gmail.com>>
 =head1 TODO
 
 =over
@@ -625,7 +669,7 @@ improvement ideas and mentoring in general.
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2010 Norbert Buchmuller, all rights reserved.
+Copyright 2010 Norbert Buchmuller, Runar Buvik, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

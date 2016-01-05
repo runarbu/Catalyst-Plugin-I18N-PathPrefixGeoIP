@@ -95,6 +95,7 @@ run_prepare_path_prefix_tests(
       },
       action => 'TestApp::Controller::Root::language_independent_stuff',
       log => [
+        debug => 'Did not find valid language by GeoIP. Failing over to languages request header. Ip Address: 127.0.0.1',
         debug => 'detected language: \'de\'',
         debug => 'set language prefix to \'de\'',
       ],
@@ -206,6 +207,7 @@ run_prepare_path_prefix_tests(
       },
       action => 'TestApp::Controller::Root::default',
       log => [
+        debug => 'Did not find valid language by GeoIP. Failing over to languages request header. Ip Address: 127.0.0.1',
         debug => 'detected language: \'de\'',
         debug => 'set language prefix to \'de\'',
       ],
@@ -226,6 +228,7 @@ run_prepare_path_prefix_tests(
       },
       action => 'TestApp::Controller::Foo::bar',
       log => [
+        debug => 'Did not find valid language by GeoIP. Failing over to languages request header. Ip Address: 127.0.0.1',
         debug => 'detected language: \'de\'',
         debug => 'set language prefix to \'de\'',
       ],
@@ -245,6 +248,7 @@ run_prepare_path_prefix_tests(
       },
       action => 'TestApp::Controller::Foo::bar',
       log => [
+        debug => 'Did not find valid language by GeoIP. Failing over to languages request header. Ip Address: 127.0.0.1',
         debug => 'detected language: N/A',
         debug => 'set language prefix to \'en\'',
       ],
@@ -264,6 +268,7 @@ run_prepare_path_prefix_tests(
       },
       action => 'TestApp::Controller::Root::index',
       log => [
+        debug => 'Did not find valid language by GeoIP. Failing over to languages request header. Ip Address: 127.0.0.1',
         debug => 'detected language: \'de\'',
         debug => 'set language prefix to \'de\'',
       ],
@@ -311,6 +316,7 @@ run_prepare_path_prefix_tests(
       },
       action => 'TestApp::Controller::Foo::bar',
       log => [
+        debug => 'Did not find valid language by GeoIP. Failing over to languages request header. Ip Address: 127.0.0.1',
         debug => 'detected language: N/A',
         debug => 'set language prefix to \'fr\'',
       ],

@@ -15,6 +15,7 @@ __PACKAGE__->config(
     language_independent_paths => qr{
       ^ language_independent_stuff
     }x,
+    geoip_db => 'data/GeoLiteCity.dat',
   },
 );
 
