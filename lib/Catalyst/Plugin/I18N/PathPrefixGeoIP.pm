@@ -16,7 +16,7 @@ use Scope::Guard;
 use I18N::LangTags::List;
 use Geo::IP;
 
-our $VERSION = '0.09';
+our $VERSION = '0.10';
 
 =head1 NAME
 
